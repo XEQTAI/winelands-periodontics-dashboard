@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winelands Periodontics - Smart Patient Onboarding</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-family='Arial'>🦷</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gold: #B8956A;
+            --dark-gold: #8B7355;
+            --light-cream: #F5F1E8;
+            --white: #FFFFFF;
+            --text-dark: #2C2C2C;
+            --text-light: #666666;
+            --success: #4CAF50;
+            --error: #E74C3C;
+            --warning: #FFC107;
+            --info: #2196F3;
+            --border-color: #D4C4B0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-cream) 0%, #F9F7F3 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-gold) 0%, var(--primary-gold) 100%);
+            color: var(--white);
+            padding: 15px 20px;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            background-color: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary-gold);
+            margin-bottom: 20px;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card h2 {
+            color: var(--dark-gold);
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(184, 149, 106, 0.1);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--white);
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary-gold);
+            background-color: rgba(184, 149, 106, 0.05);
+        }
+
+        .radio-option input[type="radio"],
+        .radio-option input[type="checkbox"] {
+            margin-right: 12px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--primary-gold);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--dark-gold) 100%);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-cream);
+            color: var(--dark-gold);
+            border: 2px solid var(--primary-gold);
+        }
+
+        .btn-block {
+            width: 100%;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-gold) 0%, var(--dark-gold) 100%);
+            transition: width 0.3s ease;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            color: var(--text-dark);
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--dark-gold) 100%);
+            color: var(--white);
+        }
+
+        .step.completed .step-number {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .voice-widget {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--dark-gold) 100%);
+            color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .voice-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .voice-widget h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .voice-widget p {
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .alert-info {
+            background-color: #E3F2FD;
+            border-left: 4px solid var(--info);
+            color: #01579B;
+        }
+
+        .alert-warning {
+            background-color: #FFF3CD;
+            border-left: 4px solid var(--warning);
+            color: #856404;
+        }
+
+        .alert-success {
+            background-color: #E8F5E9;
+            border-left: 4px solid var(--success);
+            color: #1B5E20;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .step-indicator {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">🦷 Winelands Periodontics</div>
+        <div class="nav-right">
+            <span>Patient Onboarding System</span>
+            <div class="status-badge active">Online</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="step-indicator">
+            <div class="step active" id="step-1">
+                <div class="step-number">1</div>
+                <div class="step-label">Practitioner</div>
+            </div>
+            <div class="step" id="step-2">
+                <div class="step-number">2</div>
+                <div class="step-label">Your Details</div>
+            </div>
+            <div class="step" id="step-3">
+                <div class="step-number">3</div>
+                <div class="step-label">Medical History</div>
+            </div>
+            <div class="step" id="step-4">
+                <div class="step-number">4</div>
+                <div class="step-label">Voice Chat</div>
+            </div>
+            <div class="step" id="step-5">
+                <div class="step-number">5</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="step-content" id="step1-content">
+            <div class="card">
+                <h2>👤 Who is your appointment with?</h2>
+                <p class="card-subtitle">Select your practitioner to begin the onboarding process</p>
+                
+                <div class="form-group">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="practitioner" value="dr_inu" onchange="selectPractitioner('dr_inu')">
+                            <label style="margin: 0; font-weight: 600;">Dr Inus Snyman</label>
+                        </label>
+                        <p style="margin-left: 30px; font-size: 13px; color: var(--text-light); margin-top: -8px;">Specialist in Periodontics & Oral Medicine</p>
+                    </div>
+                    
+                    <div class="radio-group" style="margin-top: 15px;">
+                        <label class="radio-option">
+                            <input type="radio" name="practitioner" value="caitlin" onchange="selectPractitioner('caitlin')">
+                            <label style="margin: 0; font-weight: 600;">Caitlin Taute</label>
+                        </label>
+                        <p style="margin-left: 30px; font-size: 13px; color: var(--text-light); margin-top: -8px;">Oral Hygienist - Periodontal Care</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="goToStep(2)">Continue to Step 2 →</button>
+            </div>
+        </div>
+
+        <div class="step-content" id="step2-content" style="display: none;">
+            <div class="card">
+                <h2>📋 Your Details</h2>
+                <p class="card-subtitle">Please provide your contact information</p>
+                
+                <form id="patientInfoForm">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Cell Phone *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Appointment Date *</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-block" onclick="goToStep(3)">Continue to Step 3 →</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="step-content" id="step3-content" style="display: none;">
+            <div class="card">
+                <h2>🏥 Medical & Dental History</h2>
+                <p class="card-subtitle" id="medicalHistorySubtitle">Loading form...</p>
+                
+                <form id="medicalHistoryForm">
+                </form>
+
+                <button type="button" class="btn btn-primary btn-block" onclick="goToStep(4)">Continue to Step 4 →</button>
+            </div>
+        </div>
+
+        <div class="step-content" id="step4-content" style="display: none;">
+            <div class="card">
+                <h2>🎤 Virtual Assistant</h2>
+                <p class="card-subtitle">Optional: Speak with our AI receptionist</p>
+                
+                <div class="alert alert-info">
+                    <span>💡</span>
+                    <div>Our AI assistant can answer questions about oral hygiene, our services, and appointment details.</div>
+                </div>
+
+                <div class="voice-widget">
+                    <div class="voice-icon">🎤</div>
+                    <h3>Talk to Our AI Receptionist</h3>
+                    <p>Natural conversation in English</p>
+                    <button class="btn btn-primary" onclick="startVoiceCall()" id="voiceCallBtn">
+                        Start Voice Call
+                    </button>
+                    <p style="font-size: 12px; margin-top: 15px; opacity: 0.8;">Call duration: ~5-10 minutes</p>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Or skip to final review</p>
+                    <button class="btn btn-secondary btn-block" onclick="goToStep(5)">Skip & Review Form →</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-content" id="step5-content" style="display: none;">
+            <div class="card">
+                <h2>✅ Review & Consent</h2>
+                <p class="card-subtitle">Please review your information and consent to treatment</p>
+                
+                <div style="background-color: var(--light-cream); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: var(--dark-gold); margin-bottom: 15px;">Your Information</h3>
+                    <ul id="reviewSummary" style="list-style: none; padding: 0;">
+                        <li><strong>Practitioner:</strong> <span id="reviewPractitioner"></span></li>
+                        <li><strong>Name:</strong> <span id="reviewName"></span></li>
+                        <li><strong>Email:</strong> <span id="reviewEmail"></span></li>
+                        <li><strong>Phone:</strong> <span id="reviewPhone"></span></li>
+                        <li><strong>Appointment:</strong> <span id="reviewDate"></span></li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span>⚠️</span>
+                    <div><strong>Important:</strong> This is a cash practice. All accounts must be settled on the day of treatment.</div>
+                </div>
+
+                <form id="consentForm">
+                    <div class="form-group">
+                        <label class="radio-option">
+                            <input type="checkbox" id="consentRadiographs" name="consentRadiographs">
+                            <label>I consent to radiographs (X-rays) being taken if required</label>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="radio-option">
+                            <input type="checkbox" id="consentPhotography" name="consentPhotography">
+                            <label>I consent to clinical photographs for my confidential record</label>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="radio-option">
+                            <input type="checkbox" id="consentPOPIA" name="consentPOPIA">
+                            <label>I acknowledge the Protection of Personal Information Act (POPIA) 2013</label>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="radio-option">
+                            <input type="checkbox" id="consentTreatment" name="consentTreatment" required>
+                            <label><strong>I understand and consent to the proposed treatment plan</strong></label>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--success); margin-top: 20px; padding: 15px;">
+                        ✓ Submit & Schedule Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="successModal">
+            <div class="modal-content">
+                <h2 style="color: var(--success); margin-bottom: 20px; text-align: center;">✓ Onboarding Complete!</h2>
+                
+                <div class="alert alert-success" style="margin-bottom: 20px;">
+                    <span>✓</span>
+                    <div>Your form has been submitted successfully</div>
+                </div>
+
+                <div style="background-color: var(--light-cream); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="margin-bottom: 10px;"><strong>Appointment with:</strong></p>
+                    <p id="successPractitioner" style="font-size: 16px; color: var(--dark-gold); font-weight: bold;"></p>
+                </div>
+
+                <ul class="checklist">
+                    <li>Form submitted and data recorded</li>
+                    <li>Confirmation email sent to your address</li>
+                    <li>Staff will call to confirm appointment</li>
+                    <li>Payment details will be discussed</li>
+                </ul>
+
+                <button class="btn btn-primary btn-block" onclick="location.reload()" style="margin-top: 20px;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let formData = {
+            practitioner: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            appointmentDate: '',
+            medicalHistory: {},
+            voiceCallStarted: false,
+            consents: {}
+        };
+
+        const practitionerConfigs = {
+            dr_inu: {
+                name: 'Dr Inus Snyman',
+                title: 'Specialist in Periodontics & Oral Medicine',
+                fields: [
+                    { name: 'mainComplaint', label: 'Main Complaint - Why are you here today?', type: 'textarea', required: true },
+                    { name: 'bleedingGums', label: 'Do your gums bleed?', type: 'select', options: ['Daily', 'Occasionally', 'Rarely', 'Never'], required: true },
+                    { name: 'smoker', label: 'Do you smoke or vape?', type: 'select', options: ['No', 'Occasionally', 'Daily'], required: true },
+                    { name: 'diabetes', label: 'Do you have diabetes?', type: 'select', options: ['Yes', 'No', 'Not sure'], required: false },
+                    { name: 'heartDisease', label: 'Heart disease or high blood pressure?', type: 'select', options: ['Yes', 'No'], required: false },
+                    { name: 'medications', label: 'Current medications (prescription & supplements)', type: 'textarea', required: false },
+                    { name: 'allergies', label: 'Known allergies', type: 'text', required: false },
+                ]
+            },
+            caitlin: {
+                name: 'Caitlin Taute',
+                title: 'Oral Hygienist - Periodontal Care',
+                fields: [
+                    { name: 'brushing', label: 'How often do you brush?', type: 'select', options: ['Once daily', 'Twice daily', 'More'], required: true },
+                    { name: 'toothbrushType', label: 'Toothbrush type', type: 'select', options: ['Manual', 'Electric (Oral-B)', 'Electric (Sonicare)', 'Other'], required: true },
+                    { name: 'interdental', label: 'How do you clean between teeth?', type: 'select', options: ['Floss', 'Interdental brushes', 'Water flosser', 'Not regularly'], required: true },
+                    { name: 'gumSymptoms', label: 'Gum symptoms (select all that apply)', type: 'checkbox', options: ['Bleeding', 'Swelling', 'Recession', 'Loose teeth', 'Bad taste', 'Pain', 'None'], required: false },
+                    { name: 'gumBleeding', label: 'Gum bleeding frequency', type: 'select', options: ['Daily', 'Occasionally', 'Rarely', 'Never'], required: true },
+                    { name: 'dentitionHistory', label: 'Dental work (select all that apply)', type: 'checkbox', options: ['Dental implants', 'Crowns/bridges', 'Veneers', 'Ortho retainers', 'Dentures', 'None'], required: false },
+                ]
+            }
+        };
+
+        function selectPractitioner(practitioner) {
+            formData.practitioner = practitioner;
+        }
+
+        function goToStep(stepNum) {
+            if (stepNum === 2 && !formData.practitioner) {
+                alert('Please select a practitioner');
+                return;
+            }
+
+            if (stepNum === 3) {
+                const form = document.getElementById('patientInfoForm');
+                if (!form.checkValidity()) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                formData.firstName = document.getElementById('firstName').value;
+                formData.lastName = document.getElementById('lastName').value;
+                formData.email = document.getElementById('email').value;
+                formData.phone = document.getElementById('phone').value;
+                formData.appointmentDate = document.getElementById('appointmentDate').value;
+                
+                populateMedicalHistoryForm();
+            }
+
+            if (stepNum === 5) {
+                collectMedicalHistory();
+                populateReview();
+            }
+
+            document.querySelectorAll('.step-content').forEach(el => el.style.display = 'none');
+            document.getElementById('step' + stepNum + '-content').style.display = 'block';
+
+            updateProgress(stepNum);
+            updateStepIndicator(stepNum);
+
+            window.scrollTo(0, 0);
+        }
+
+        function populateMedicalHistoryForm() {
+            const config = practitionerConfigs[formData.practitioner];
+            document.getElementById('medicalHistorySubtitle').textContent = 'Complete the assessment for ' + config.name;
+            
+            let html = '';
+            config.fields.forEach(field => {
+                html += '<div class="form-group">';
+                html += '<label for="' + field.name + '">' + field.label + (field.required ? ' *' : '') + '</label>';
+                
+                if (field.type === 'textarea') {
+                    html += '<textarea id="' + field.name + '" name="' + field.name + '"' + (field.required ? ' required' : '') + '></textarea>';
+                } else if (field.type === 'select') {
+                    html += '<select id="' + field.name + '" name="' + field.name + '"' + (field.required ? ' required' : '') + '>';
+                    html += '<option value="">-- Select --</option>';
+                    field.options.forEach(opt => {
+                        html += '<option value="' + opt + '">' + opt + '</option>';
+                    });
+                    html += '</select>';
+                } else if (field.type === 'checkbox') {
+                    field.options.forEach(opt => {
+                        html += '<label style="display: block; margin: 8px 0;"><input type="checkbox" name="' + field.name + '" value="' + opt + '"> ' + opt + '</label>';
+                    });
+                } else {
+                    html += '<input type="text" id="' + field.name + '" name="' + field.name + '"' + (field.required ? ' required' : '') + '>';
+                }
+                html += '</div>';
+            });
+            
+            document.getElementById('medicalHistoryForm').innerHTML = html;
+        }
+
+        function collectMedicalHistory() {
+            const config = practitionerConfigs[formData.practitioner];
+            config.fields.forEach(field => {
+                const element = document.getElementById(field.name);
+                if (element) {
+                    if (field.type === 'checkbox') {
+                        const checked = Array.from(document.querySelectorAll('input[name="' + field.name + '"]:checked')).map(e => e.value);
+                        formData.medicalHistory[field.name] = checked;
+                    } else {
+                        formData.medicalHistory[field.name] = element.value;
+                    }
+                }
+            });
+        }
+
+        function populateReview() {
+            const practitionerName = practitionerConfigs[formData.practitioner].name;
+            document.getElementById('reviewPractitioner').textContent = practitionerName;
+            document.getElementById('reviewName').textContent = formData.firstName + ' ' + formData.lastName;
+            document.getElementById('reviewEmail').textContent = formData.email;
+            document.getElementById('reviewPhone').textContent = formData.phone;
+            document.getElementById('reviewDate').textContent = formData.appointmentDate;
+        }
+
+        function startVoiceCall() {
+            document.getElementById('voiceCallBtn').disabled = true;
+            document.getElementById('voiceCallBtn').textContent = 'Opening Voice Call...';
+            
+            const elevenLabsAgentId = 'agent_6801kn6sbgdqekn9k3f2znesf7kq';
+            const voiceCallURL = 'https://elevenlabs.io/app/talk-to?agent_id=' + elevenLabsAgentId;
+            
+            window.open(voiceCallURL, 'ElevenLabsVoiceCall', 'width=800,height=600');
+            
+            formData.voiceCallStarted = true;
+            setTimeout(() => {
+                document.getElementById('voiceCallBtn').disabled = false;
+                document.getElementById('voiceCallBtn').textContent = 'Voice Call Completed';
+                document.getElementById('voiceCallBtn').style.backgroundColor = 'var(--success)';
+            }, 2000);
+        }
+
+        function updateProgress(stepNum) {
+            const percentage = (stepNum / 5) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function updateStepIndicator(currentStep) {
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById('step-' + i);
+                if (i < currentStep) {
+                    stepEl.classList.add('completed');
+                    stepEl.classList.remove('active');
+                } else if (i === currentStep) {
+                    stepEl.classList.add('active');
+                    stepEl.classList.remove('completed');
+                } else {
+                    stepEl.classList.remove('active', 'completed');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const consentForm = document.getElementById('consentForm');
+            if (consentForm) {
+                consentForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    formData.consents = {
+                        radiographs: document.getElementById('consentRadiographs').checked,
+                        photography: document.getElementById('consentPhotography').checked,
+                        popia: document.getElementById('consentPOPIA').checked,
+                        treatment: document.getElementById('consentTreatment').checked,
+                    };
+
+                    submitForm();
+                });
+            }
+        });
+
+        function submitForm() {
+            console.log('Submitting form data:', formData);
+            localStorage.setItem('winelandsPatientData', JSON.stringify(formData));
+            const practitionerName = practitionerConfigs[formData.practitioner].name;
+            document.getElementById('successPractitioner').textContent = practitionerName;
+            document.getElementById('successModal').classList.add('active');
+        }
+    </script>
+</body>
+</html>
